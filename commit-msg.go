@@ -46,7 +46,7 @@ func main() {
 	}
 
 	// Prepend the JIRA issue key to the commit message
-	newCommitMessage := jiraIssueKey + ": " + string(commitMessage)
+	newCommitMessage := "[" + jiraIssueKey + "] " + string(commitMessage)
 
 	// Write the new commit message back to the file
 	err = ioutil.WriteFile(commitMessageFile, []byte(newCommitMessage), 0644)
