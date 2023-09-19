@@ -45,6 +45,11 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if strings.Contains(string(commitMessage), jiraIssueKey) {
+		log.Println("Commit already contains issue key")
+		return
+	}
+
 	// Prepend the JIRA issue key to the commit message
 	newCommitMessage := "[" + jiraIssueKey + "] " + string(commitMessage)
 
