@@ -23,7 +23,8 @@ func main() {
 	cmd.Stdout = &out
 	err := cmd.Run()
 	if err != nil {
-		log.Fatal(err)
+		log.Println("git rev parse failed, your HEAD is probably detached, passing along message without changing")
+		return
 	}
 	branchName := strings.TrimSpace(out.String())
 
@@ -42,6 +43,7 @@ func main() {
 	// Read the commit message
 	commitMessage, err := ioutil.ReadFile(commitMessageFile)
 	if err != nil {
+		log.Println("read commit message file failed")
 		log.Fatal(err)
 	}
 
@@ -56,6 +58,7 @@ func main() {
 	// Write the new commit message back to the file
 	err = ioutil.WriteFile(commitMessageFile, []byte(newCommitMessage), 0644)
 	if err != nil {
+		log.Println("write commit file failed")
 		log.Fatal(err)
 	}
 }
