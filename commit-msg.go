@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
 	"bytes"
 	"io/ioutil"
 	"log"
@@ -41,11 +43,13 @@ func main() {
 	jiraIssueKey := matches[2]
 
 	// Read the commit message
-	commitMessage, err := ioutil.ReadFile(commitMessageFile)
+	commitMessageRaw, err := ioutil.ReadFile(commitMessageFile)
 	if err != nil {
 		log.Println("read commit message file failed")
 		log.Fatal(err)
 	}
+
+	commitMessage := removeLinesWithHash(string(commitMessageRaw))
 
 	if strings.Contains(string(commitMessage), jiraIssueKey) {
 		log.Println("Commit already contains issue key")
@@ -61,4 +65,23 @@ func main() {
 		log.Println("write commit file failed")
 		log.Fatal(err)
 	}
+}
+
+func removeLinesWithHash(input string) string {
+	var resultLines []string
+
+	scanner := bufio.NewScanner(strings.NewReader(input))
+	for scanner.Scan() {
+		line := scanner.Text()
+		if !strings.HasPrefix(line, "#") {
+			resultLines = append(resultLines, line)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		fmt.Println("Error reading input:", err)
+		return input // Return the original input in case of an error
+	}
+
+	return strings.Join(resultLines, "\n")
 }
